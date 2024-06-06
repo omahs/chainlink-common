@@ -1,18 +1,23 @@
 package corenodecomponents
 
 import (
+	"github.com/K-Phoen/grabana/alert"
 	"github.com/grafana/grafana-foundation-sdk/go/cog"
 	"github.com/grafana/grafana-foundation-sdk/go/common"
 	"github.com/grafana/grafana-foundation-sdk/go/dashboard"
 	"github.com/grafana/grafana-foundation-sdk/go/prometheus"
+	"golang.org/x/exp/maps"
 
 	"github.com/smartcontractkit/chainlink-common/observability-lib/utils"
 )
 
-func BuildDashboard(name string, dataSourceMetric string) (dashboard.Dashboard, error) {
+var panelId uint32
+
+func BuildDashboard(name string, dataSourceMetric string, alertsTags map[string]string) (dashboard.Dashboard, []*alert.Alert, error) {
 	props := Props{
 		MetricsDataSource: dataSourceMetric,
 		PlatformOpts:      PlatformPanelOpts(),
+		AlertsTags:        alertsTags,
 	}
 
 	builder := dashboard.NewDashboardBuilder(name).
@@ -21,9 +26,12 @@ func BuildDashboard(name string, dataSourceMetric string) (dashboard.Dashboard, 
 		Time("now-30m", "now")
 
 	utils.AddVars(builder, vars(props))
-	utils.AddPanels(builder, panelsGeneralInfo(props))
+	panels, alerts := panelsGeneralInfo(props)
+	utils.AddPanels(builder, panels)
 
-	return builder.Build()
+	newDashboard, err := builder.Build()
+
+	return newDashboard, alerts, err
 }
 
 func vars(p Props) []cog.Builder[dashboard.VariableModel] {
@@ -51,10 +59,20 @@ func vars(p Props) []cog.Builder[dashboard.VariableModel] {
 	return variables
 }
 
-func panelsGeneralInfo(p Props) []cog.Builder[dashboard.Panel] {
+func panelsGeneralInfo(p Props) ([]cog.Builder[dashboard.Panel], []*alert.Alert) {
 	var panelsArray []cog.Builder[dashboard.Panel]
+	var alertsArray []*alert.Alert
+
+	commonTags := map[string]string{
+		"severity":      "info",
+		"slack_channel": "team-blockchain-foundation-alerts-info",
+		"runbook":       "https://github.com/smartcontractkit/alerts/blob/master/runbooks/blockchain-foundation/core-node-components.md",
+		"dashboardUrl":  "https://grafana.ops.prod.cldev.sh/d/c6d19f97-4ead-4917-aa11-cdbe5a3ef6f9/corenodecomponents?orgId=1&refresh=30s",
+	}
+	maps.Copy(commonTags, p.AlertsTags)
 
 	panelsArray = append(panelsArray, utils.TablePanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"List Nodes",
 		"",
@@ -70,8 +88,9 @@ func panelsGeneralInfo(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
-		"Uptime",
+		"Node Uptime",
 		"",
 		4,
 		24,
@@ -85,6 +104,7 @@ func panelsGeneralInfo(p Props) []cog.Builder[dashboard.Panel] {
 	).Min(0).Max(100))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Components Health Avg by Service",
 		"",
@@ -111,6 +131,7 @@ func panelsGeneralInfo(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Components Health by Service",
 		"",
@@ -126,6 +147,7 @@ func panelsGeneralInfo(p Props) []cog.Builder[dashboard.Panel] {
 	).Min(0).Max(100))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Components Health Avg by Service",
 		"",
@@ -140,5 +162,27 @@ func panelsGeneralInfo(p Props) []cog.Builder[dashboard.Panel] {
 		},
 	).Min(0).Max(100))
 
-	return panelsArray
+	alertsArray = append(alertsArray, utils.AlertGrafana(
+		panelId,
+		"Uptime less than 90% over last 15 minutes on one component in a Node",
+		"Component {{$labels.service_id}} uptime in the last 15m is {{$value}}%",
+		`env: {{$labels.env}}
+cluster: {{$labels.cluster}}
+namespace: {{$labels.namespace}}
+job: {{$labels.job}}
+blockchain: {{$labels.blockchain}}
+product: {{$labels.product}}
+networkType: {{$labels.network_type}}
+component: {{$labels.component}}`,
+		"1m",
+		"https://github.com/smartcontractkit/alerts/blob/master/runbooks/blockchain-foundation/core-node-components.md",
+		commonTags,
+		utils.AlertPrometheusQuery{
+			Ref:       "A",
+			Query:     `100 * avg(avg_over_time(health{service!~".*-preview", env="production"}[15m])) by (service_id, version, service, blockchain, network_type, cluster, env)`,
+			Condition: alert.If(alert.Avg, "A", alert.IsBelow(90)),
+		},
+	))
+
+	return panelsArray, alertsArray
 }

@@ -12,6 +12,7 @@ type PlatformOpts struct {
 type Props struct {
 	MetricsDataSource string
 	PlatformOpts      PlatformOpts
+	AlertsTags        map[string]string
 }
 
 // PlatformPanelOpts generate different queries for "docker" and "k8s" deployment platforms

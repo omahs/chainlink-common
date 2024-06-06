@@ -10,6 +10,8 @@ import (
 	"github.com/smartcontractkit/chainlink-common/observability-lib/utils"
 )
 
+var panelId uint32
+
 func BuildDashboard(name string, dataSourceMetric string, platform string) (dashboard.Dashboard, error) {
 	props := Props{
 		MetricsDataSource: dataSourceMetric,
@@ -97,6 +99,7 @@ func panelsGeneralClusterInfo(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"App Version",
 		"app version",
@@ -115,6 +118,7 @@ func panelsGeneralClusterInfo(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Go Version",
 		"golang version",
@@ -133,6 +137,7 @@ func panelsGeneralClusterInfo(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Uptime in days",
 		"instance uptime",
@@ -151,6 +156,7 @@ func panelsGeneralClusterInfo(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"ETH Balance",
 		"ETH balance",
@@ -176,6 +182,7 @@ func panelsGeneralClusterInfo(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Solana Balance",
 		"Solana balance",
@@ -201,6 +208,7 @@ func panelsGeneralClusterInfo(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Service Components Health",
 		"service components health",
@@ -216,6 +224,7 @@ func panelsGeneralClusterInfo(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"ETH Balance",
 		"eth balance graph",
@@ -231,6 +240,7 @@ func panelsGeneralClusterInfo(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"SOL Balance",
 		"sol balance graph",
@@ -252,6 +262,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Goroutines",
 		"goroutines",
@@ -270,6 +281,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"RPS",
 		"requests per second",
@@ -289,6 +301,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"RPS by Type",
 		"",
@@ -304,6 +317,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Avg number of logs returned",
 		"",
@@ -319,6 +333,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Max number of logs returned",
 		"",
@@ -334,6 +349,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Logs returned by chain",
 		"",
@@ -349,6 +365,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Queries duration by type (0.5 perc)",
 		"",
@@ -364,6 +381,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Queries duration by type (0.9 perc)",
 		"",
@@ -379,6 +397,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Queries duration by type (0.99 perc)",
 		"",
@@ -394,6 +413,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Queries duration by chain (0.99 perc)",
 		"",
@@ -409,6 +429,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Number of logs inserted",
 		"",
@@ -424,6 +445,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Logs insertion rate",
 		"",
@@ -439,6 +461,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Number of blocks inserted",
 		"",
@@ -454,6 +477,7 @@ func logPoller(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Blocks insertion rate",
 		"",
@@ -475,6 +499,7 @@ func feedsJobs(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Feeds Job Proposal Requests",
 		"",
@@ -490,6 +515,7 @@ func feedsJobs(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Feeds Job Proposal Count",
 		"",
@@ -511,6 +537,7 @@ func mailbox(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Mailbox Load Percent",
 		"",
@@ -532,6 +559,7 @@ func promReporter(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Unconfirmed Transactions",
 		"",
@@ -547,6 +575,7 @@ func promReporter(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Unconfirmed TX Age",
 		"",
@@ -562,6 +591,7 @@ func promReporter(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Unconfirmed TX Blocks",
 		"",
@@ -583,6 +613,7 @@ func txManager(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"TX Manager Time Until TX Broadcast",
 		"",
@@ -598,6 +629,7 @@ func txManager(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"TX Manager Num Gas Bumps",
 		"",
@@ -613,6 +645,7 @@ func txManager(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"TX Manager Num Gas Bumps Exceeds Limit",
 		"",
@@ -628,6 +661,7 @@ func txManager(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"TX Manager Num Confirmed Transactions",
 		"",
@@ -643,6 +677,7 @@ func txManager(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"TX Manager Num Successful Transactions",
 		"",
@@ -658,6 +693,7 @@ func txManager(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"TX Manager Num Reverted Transactions",
 		"",
@@ -673,6 +709,7 @@ func txManager(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"TX Manager Num Fwd Transactions",
 		"",
@@ -688,6 +725,7 @@ func txManager(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"TX Manager Num Transactions Attempts",
 		"",
@@ -703,6 +741,7 @@ func txManager(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"TX Manager Time Until TX Confirmed",
 		"",
@@ -718,6 +757,7 @@ func txManager(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"TX Manager Block Until TX Confirmed",
 		"",
@@ -739,6 +779,7 @@ func headTracker(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Head tracker current head",
 		"",
@@ -754,6 +795,7 @@ func headTracker(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Head tracker very old head",
 		"",
@@ -769,6 +811,7 @@ func headTracker(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Head tracker heads received",
 		"",
@@ -784,6 +827,7 @@ func headTracker(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Head tracker connection errors",
 		"",
@@ -805,6 +849,7 @@ func appDBConnections(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"DB Connections",
 		"",
@@ -832,6 +877,7 @@ func appDBConnections(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"DB Wait Count",
 		"",
@@ -847,6 +893,7 @@ func appDBConnections(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"DB Wait Time",
 		"",
@@ -868,6 +915,7 @@ func sqlQueries(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"SQL Query Timeout Percent",
 		"",
@@ -897,6 +945,7 @@ func logsCounters(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Logs Counters",
 		"",
@@ -928,6 +977,7 @@ func logsCounters(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Logs Rate",
 		"",
@@ -965,6 +1015,7 @@ func evmPoolLifecycle(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool Highest Seen Block",
 		"",
@@ -980,6 +1031,7 @@ func evmPoolLifecycle(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool Num Seen Blocks",
 		"",
@@ -995,6 +1047,7 @@ func evmPoolLifecycle(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool Node Polls Total",
 		"",
@@ -1010,6 +1063,7 @@ func evmPoolLifecycle(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool Node Polls Failed",
 		"",
@@ -1025,6 +1079,7 @@ func evmPoolLifecycle(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool Node Polls Success",
 		"",
@@ -1046,6 +1101,7 @@ func nodesRPC(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Node RPC Alive",
 		"",
@@ -1064,6 +1120,7 @@ func nodesRPC(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Node RPC Closed",
 		"",
@@ -1082,6 +1139,7 @@ func nodesRPC(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Node RPC Dialed",
 		"",
@@ -1100,6 +1158,7 @@ func nodesRPC(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Node RPC InvalidChainID",
 		"",
@@ -1118,6 +1177,7 @@ func nodesRPC(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Node RPC OutOfSync",
 		"",
@@ -1136,6 +1196,7 @@ func nodesRPC(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Node RPC UnDialed",
 		"",
@@ -1154,6 +1215,7 @@ func nodesRPC(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Node RPC Unreachable",
 		"",
@@ -1172,6 +1234,7 @@ func nodesRPC(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Node RPC Unusable",
 		"",
@@ -1196,6 +1259,7 @@ func evmNodeRPC(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool RPC Node Calls Success Rate",
 		"",
@@ -1219,6 +1283,7 @@ func evmNodeRPC(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool RPC Node Dials Failure Rate",
 		"",
@@ -1242,6 +1307,7 @@ func evmNodeRPC(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool RPC Node Transitions",
 		"",
@@ -1277,6 +1343,7 @@ func evmNodeRPC(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool RPC Node States",
 		"",
@@ -1292,6 +1359,7 @@ func evmNodeRPC(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool RPC Node Verifies Success Rate",
 		"",
@@ -1307,6 +1375,7 @@ func evmNodeRPC(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool RPC Node Verifies Failure Rate",
 		"",
@@ -1328,6 +1397,7 @@ func evmRPCNodeLatencies(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool RPC Node Calls Latency 0.90 quantile",
 		"",
@@ -1343,6 +1413,7 @@ func evmRPCNodeLatencies(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool RPC Node Calls Latency 0.95 quantile",
 		"",
@@ -1358,6 +1429,7 @@ func evmRPCNodeLatencies(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"EVM Pool RPC Node Calls Latency 0.99 quantile",
 		"",
@@ -1379,6 +1451,7 @@ func evmBlockHistoryEstimator(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Gas Updater All Gas Price Percentiles",
 		"",
@@ -1394,6 +1467,7 @@ func evmBlockHistoryEstimator(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Gas Updater All Tip Cap Percentiles",
 		"",
@@ -1409,6 +1483,7 @@ func evmBlockHistoryEstimator(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Gas Updater Set Gas Price",
 		"",
@@ -1424,6 +1499,7 @@ func evmBlockHistoryEstimator(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Gas Updater Set Tip Cap",
 		"",
@@ -1439,6 +1515,7 @@ func evmBlockHistoryEstimator(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Gas Updater Current Base Fee",
 		"",
@@ -1454,6 +1531,7 @@ func evmBlockHistoryEstimator(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Block History Estimator Connectivity Failure Count",
 		"",
@@ -1475,6 +1553,7 @@ func pipelines(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Pipeline Task Execution Time",
 		"",
@@ -1490,6 +1569,7 @@ func pipelines(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Pipeline Run Errors",
 		"",
@@ -1505,6 +1585,7 @@ func pipelines(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Pipeline Run Total Time to Completion",
 		"",
@@ -1520,6 +1601,7 @@ func pipelines(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Pipeline Tasks Total Finished",
 		"",
@@ -1541,6 +1623,7 @@ func httpAPI(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Request Duration p95",
 		"",
@@ -1556,6 +1639,7 @@ func httpAPI(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Request Total Rate over interval",
 		"",
@@ -1571,6 +1655,7 @@ func httpAPI(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Average Request Size",
 		"",
@@ -1586,6 +1671,7 @@ func httpAPI(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Response Size",
 		"",
@@ -1607,6 +1693,7 @@ func promHTTP(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.GaugePanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"HTTP Request in flight",
 		"",
@@ -1621,6 +1708,7 @@ func promHTTP(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"HTTP rate by return code",
 		"",
@@ -1642,6 +1730,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Threads",
 		"",
@@ -1657,6 +1746,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Heap Allocations",
 		"",
@@ -1675,6 +1765,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Heap allocations",
 		"",
@@ -1690,6 +1781,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Heap allocations",
 		"",
@@ -1721,6 +1813,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Memory in Off-Heap",
 		"",
@@ -1764,6 +1857,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Memory in Stack",
 		"",
@@ -1783,6 +1877,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Total Used Memory",
 		"",
@@ -1798,6 +1893,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Number of Live Objects",
 		"",
@@ -1813,6 +1909,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Rate of Objects Allocated",
 		"",
@@ -1828,6 +1925,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Rate of a Pointer Dereferences",
 		"",
@@ -1843,6 +1941,7 @@ func goMetrics(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Goroutines",
 		"",

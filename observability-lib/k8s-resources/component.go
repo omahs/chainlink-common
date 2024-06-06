@@ -9,6 +9,8 @@ import (
 	"github.com/smartcontractkit/chainlink-common/observability-lib/utils"
 )
 
+var panelId uint32
+
 func BuildDashboard(name string, dataSourceMetric string, dataSourceLog string) (dashboard.Dashboard, error) {
 	props := Props{
 		MetricsDataSource: dataSourceMetric,
@@ -61,6 +63,7 @@ func headlines(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"CPU Utilisation (from requests)",
 		"",
@@ -80,6 +83,7 @@ func headlines(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"CPU Utilisation (from limits)",
 		"",
@@ -99,6 +103,7 @@ func headlines(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Memory Utilisation (from requests)",
 		"",
@@ -118,6 +123,7 @@ func headlines(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Memory Utilisation (from limits)",
 		"",
@@ -143,6 +149,7 @@ func podStatus(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Pod Restarts",
 		"Number of pod restarts",
@@ -161,6 +168,7 @@ func podStatus(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"OOM Events",
 		"Out-of-memory number of events",
@@ -179,6 +187,7 @@ func podStatus(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"OOM Killed",
 		"",
@@ -203,6 +212,7 @@ func resourcesUsage(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"CPU Usage",
 		"",
@@ -226,6 +236,7 @@ func resourcesUsage(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Memory Usage",
 		"",
@@ -255,6 +266,7 @@ func networkUsage(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Receive Bandwidth",
 		"",
@@ -270,6 +282,7 @@ func networkUsage(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Transmit Bandwidth",
 		"",
@@ -285,6 +298,7 @@ func networkUsage(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Average Container Bandwidth by Namespace: Received",
 		"",
@@ -300,6 +314,7 @@ func networkUsage(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Average Container Bandwidth by Namespace: Transmitted",
 		"",
@@ -321,6 +336,7 @@ func diskUsage(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"IOPS(Read+Write)",
 		"",
@@ -336,6 +352,7 @@ func diskUsage(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"ThroughPut(Read+Write)",
 		"",

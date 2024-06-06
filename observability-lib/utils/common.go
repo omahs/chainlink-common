@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"fmt"
+
+	"github.com/K-Phoen/grabana/alert"
 	"github.com/grafana/grafana-foundation-sdk/go/cog"
 	"github.com/grafana/grafana-foundation-sdk/go/common"
 	"github.com/grafana/grafana-foundation-sdk/go/dashboard"
@@ -10,6 +13,11 @@ import (
 	"github.com/grafana/grafana-foundation-sdk/go/table"
 	"github.com/grafana/grafana-foundation-sdk/go/timeseries"
 )
+
+func Inc(p *uint32) uint32 {
+	*p++
+	return *p
+}
 
 func datasourceRef(uid string) dashboard.DataSourceRef {
 	return dashboard.DataSourceRef{Uid: &uid}
@@ -70,6 +78,7 @@ func Float64Ptr(f float64) *float64 {
 }
 
 func StatPanel(
+	id uint32,
 	datasource string,
 	title string,
 	description string,
@@ -84,6 +93,7 @@ func StatPanel(
 	query ...PrometheusQuery,
 ) *stat.PanelBuilder {
 	panel := stat.NewPanelBuilder().
+		Id(id).
 		Datasource(datasourceRef(datasource)).
 		Height(height).
 		Span(span).
@@ -105,6 +115,7 @@ func StatPanel(
 }
 
 func TimeSeriesPanel(
+	id uint32,
 	datasource string,
 	title string,
 	description string,
@@ -116,6 +127,7 @@ func TimeSeriesPanel(
 	query ...PrometheusQuery,
 ) *timeseries.PanelBuilder {
 	panel := timeseries.NewPanelBuilder().
+		Id(id).
 		Datasource(datasourceRef(datasource)).
 		Height(height).
 		Span(span).
@@ -139,6 +151,7 @@ func TimeSeriesPanel(
 }
 
 func GaugePanel(
+	id uint32,
 	datasource string,
 	title string,
 	description string,
@@ -149,6 +162,7 @@ func GaugePanel(
 	query ...PrometheusQuery,
 ) *gauge.PanelBuilder {
 	panel := gauge.NewPanelBuilder().
+		Id(id).
 		Datasource(datasourceRef(datasource)).
 		Height(height).
 		Span(span).
@@ -165,6 +179,7 @@ func GaugePanel(
 }
 
 func TablePanel(
+	id uint32,
 	datasource string,
 	title string,
 	description string,
@@ -175,6 +190,7 @@ func TablePanel(
 	query ...PrometheusQuery,
 ) *table.PanelBuilder {
 	panel := table.NewPanelBuilder().
+		Id(id).
 		Datasource(datasourceRef(datasource)).
 		Height(height).
 		Span(span).
@@ -188,4 +204,45 @@ func TablePanel(
 	}
 
 	return panel
+}
+
+type AlertPrometheusQuery struct {
+	Ref       string
+	Query     string
+	Condition alert.Option
+}
+
+func AlertGrafana(
+	panelID uint32,
+	alertName string,
+	summary string,
+	description string,
+	forTimeRange string,
+	runbookUrl string,
+	tags map[string]string,
+	query ...AlertPrometheusQuery,
+) *alert.Alert {
+
+	options := []alert.Option{
+		alert.Summary(summary),
+		alert.Description(description),
+		alert.EvaluateEvery("30s"),
+		alert.For(forTimeRange),
+		alert.OnNoData(alert.NoDataEmpty),
+		alert.OnExecutionError(alert.ErrorAlerting),
+		alert.Runbook(runbookUrl),
+		alert.Tags(tags),
+	}
+
+	for _, q := range query {
+		options = append(options, alert.WithPrometheusQuery(q.Ref, q.Query))
+		if q.Condition != nil {
+			options = append(options, q.Condition)
+		}
+	}
+
+	newAlert := alert.New(alertName, options...)
+	newAlert.HookPanelID(fmt.Sprintf("%d", panelID))
+
+	return newAlert
 }

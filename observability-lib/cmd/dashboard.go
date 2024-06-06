@@ -3,9 +3,11 @@ package cmd
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/K-Phoen/grabana"
+	"github.com/K-Phoen/grabana/alert"
 	"github.com/grafana/grafana-foundation-sdk/go/dashboard"
 
 	"github.com/smartcontractkit/chainlink-common/observability-lib/utils"
@@ -20,6 +22,7 @@ type Dashboard struct {
 	dataSources DataSources
 	platform    string
 	builder     dashboard.Dashboard
+	alerts      []*alert.Alert
 }
 
 type DataSources struct {
@@ -40,7 +43,16 @@ func SetDataSources(dataSources []string) DataSources {
 	return dataSourcesType
 }
 
-func NewDashboard(name string, token string, url string, folder string, dataSources DataSources, platform string, builder dashboard.Dashboard) *Dashboard {
+func NewDashboard(
+	name string,
+	token string,
+	url string,
+	folder string,
+	dataSources DataSources,
+	platform string,
+	builder dashboard.Dashboard,
+	alerts ...*alert.Alert,
+) *Dashboard {
 	return &Dashboard{
 		name:        name,
 		token:       token,
@@ -49,6 +61,7 @@ func NewDashboard(name string, token string, url string, folder string, dataSour
 		dataSources: dataSources,
 		platform:    platform,
 		builder:     builder,
+		alerts:      alerts,
 	}
 }
 
@@ -69,13 +82,13 @@ func (d *Dashboard) Deploy() error {
 		d.url,
 		d.token,
 	)
-	_, _, err := grafanaClient.PostDashboard(grafana.PostDashboardRequest{
+	resp, _, errPostDashboard := grafanaClient.PostDashboard(grafana.PostDashboardRequest{
 		Dashboard: d.builder,
 		Overwrite: true,
 		FolderID:  int(folder.ID),
 	})
-	if err != nil {
-		return err
+	if errPostDashboard != nil {
+		return errPostDashboard
 	}
 
 	utils.Logger.Info().
@@ -83,6 +96,32 @@ func (d *Dashboard) Deploy() error {
 		Str("URL", d.url).
 		Str("Folder", d.folder).
 		Msg("Dashboard deployed")
+
+	boardFromGrafana, _, errGetDashboard := grafanaClient.GetDashboard(*resp.UID)
+	if errGetDashboard != nil {
+		return fmt.Errorf("error getting dashboard: %w", errGetDashboard)
+	}
+
+	datasourcesMap, _, errGetDataSources := grafanaClient.GetDatasources()
+	if errGetDataSources != nil {
+		return nil
+	}
+
+	// Create alerts for the dashboard
+	if len(d.alerts) > 0 {
+		for i := range d.alerts {
+			newAlert := *d.alerts[i]
+			newAlert.HookDashboardUID(*boardFromGrafana.Dashboard.Uid)
+
+			if err := client.AddAlert(ctx, folder.UID, newAlert, datasourcesMap); err != nil {
+				return fmt.Errorf("error creating alert: %w", err)
+			}
+		}
+		utils.Logger.Info().
+			Str("URL", d.url+"/alerting/list").
+			Str("Folder", d.folder).
+			Msg("Alerts deployed")
+	}
 
 	return nil
 }

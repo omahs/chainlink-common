@@ -8,6 +8,8 @@ import (
 	"github.com/smartcontractkit/chainlink-common/observability-lib/utils"
 )
 
+var panelId uint32
+
 func BuildDashboard(name string, dataSourceMetric string, platform string, ocrVersion string) (dashboard.Dashboard, error) {
 	props := Props{
 		MetricsDataSource: dataSourceMetric,
@@ -85,6 +87,7 @@ func summary(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Telemetry Down",
 		"Which jobs are not receiving any telemetry?",
@@ -110,6 +113,7 @@ func summary(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Oracle Down",
 		"Which NOPs are not providing any telemetry?",
@@ -135,6 +139,7 @@ func summary(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Feeds reporting failure",
 		"Which feeds are failing to report?",
@@ -160,6 +165,7 @@ func summary(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Feed telemetry Down",
 		"Which feeds are not receiving any telemetry?",
@@ -185,6 +191,7 @@ func summary(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Oracles no observations",
 		"Which NOPs are not providing observations?",
@@ -210,6 +217,7 @@ func summary(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Oracles not contributing observations to feeds",
 		"Which oracles are failing to make observations on feeds they should be participating in?",
@@ -241,6 +249,7 @@ func ocrContractConfigOracle(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"OCR Contract Oracle Active",
 		"set to one as long as an oracle is on a feed",
@@ -282,6 +291,7 @@ func ocrContractConfigNodes(p Props) []cog.Builder[dashboard.Panel] {
 	}
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Number of NOPs",
 		"",
@@ -311,6 +321,7 @@ func priceReporting(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	telemetryP2PReceivedTotal := utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"P2P messages received",
 		"From an individual node's perspective, how many messages are they receiving from other nodes? Uses ocr_telemetry_p2p_received_total",
@@ -326,6 +337,7 @@ func priceReporting(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	telemetryP2PReceivedTotalRate := utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"P2P messages received Rate",
 		"From an individual node's perspective, how many messages are they receiving from other nodes? Uses ocr_telemetry_p2p_received_total",
@@ -341,6 +353,7 @@ func priceReporting(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	telemetryObservationAsk := utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Ask observation in MessageObserve sent",
 		"",
@@ -356,6 +369,7 @@ func priceReporting(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	telemetryObservation := utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Price observation in MessageObserve sent",
 		"",
@@ -371,6 +385,7 @@ func priceReporting(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	telemetryObservationBid := utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Bid observation in MessageObserve sent",
 		"",
@@ -386,6 +401,7 @@ func priceReporting(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	telemetryMessageProposeObservationAsk := utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Ask MessagePropose observations",
 		"",
@@ -401,6 +417,7 @@ func priceReporting(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	telemetryMessageProposeObservation := utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Price MessagePropose observations",
 		"",
@@ -416,6 +433,7 @@ func priceReporting(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	telemetryMessageProposeObservationBid := utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Bid MessagePropose observations",
 		"",
@@ -431,6 +449,7 @@ func priceReporting(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	telemetryMessageProposeObservationTotal := utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Total number of observations included in MessagePropose",
 		"How often is a node's observation included in the report?",
@@ -446,6 +465,7 @@ func priceReporting(p Props) []cog.Builder[dashboard.Panel] {
 	)
 
 	telemetryMessageObserveTotal := utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Total MessageObserve sent",
 		"From an individual node's perspective, how often are they sending an observation?",
@@ -496,6 +516,7 @@ func roundEpochProgression(p Props) []cog.Builder[dashboard.Panel] {
 	}
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Agreed Epoch Progression",
 		"",
@@ -511,6 +532,7 @@ func roundEpochProgression(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Round Epoch Progression",
 		"",
@@ -526,6 +548,7 @@ func roundEpochProgression(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Rounds Started",
 		`Tracks individual nodes firing "new round" message via telemetry (not part of P2P messages)`,
@@ -541,6 +564,7 @@ func roundEpochProgression(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.TimeSeriesPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Telemetry Ingested",
 		"",
@@ -562,6 +586,7 @@ func ocrContractConfigDelta(p Props) []cog.Builder[dashboard.Panel] {
 	var panelsArray []cog.Builder[dashboard.Panel]
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Relative Deviation Threshold",
 		"",
@@ -580,6 +605,7 @@ func ocrContractConfigDelta(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Max Contract Value Age Seconds",
 		"",
@@ -598,6 +624,7 @@ func ocrContractConfigDelta(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Observation Grace Period Seconds",
 		"",
@@ -616,6 +643,7 @@ func ocrContractConfigDelta(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Bad Epoch Timeout Seconds",
 		"",
@@ -634,6 +662,7 @@ func ocrContractConfigDelta(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Resend Interval Seconds",
 		"",
@@ -652,6 +681,7 @@ func ocrContractConfigDelta(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Round Interval Seconds",
 		"",
@@ -670,6 +700,7 @@ func ocrContractConfigDelta(p Props) []cog.Builder[dashboard.Panel] {
 	))
 
 	panelsArray = append(panelsArray, utils.StatPanel(
+		utils.Inc(&panelId),
 		p.MetricsDataSource,
 		"Transmission Stage Timeout Seconds",
 		"",
