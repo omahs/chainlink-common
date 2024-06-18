@@ -50,6 +50,7 @@ func TestAddVars(t *testing.T) {
 func TestStatPanel(t *testing.T) {
 	t.Run("StatPanel creates a stat panel", func(t *testing.T) {
 		statPanelTest := utils.StatPanel(
+			1,
 			"Prometheus",
 			"Test",
 			"Test",
@@ -75,6 +76,7 @@ func TestAddPanels(t *testing.T) {
 		builder := dashboard.NewDashboardBuilder("test")
 		utils.AddPanels(builder, []cog.Builder[dashboard.Panel]{
 			utils.StatPanel(
+				1,
 				"Prometheus",
 				"Test",
 				"Test",

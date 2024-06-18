@@ -17,6 +17,7 @@ func TestBuildDashboard(t *testing.T) {
 		builder := dashboard.NewDashboardBuilder("test")
 		utils.AddPanels(builder, []cog.Builder[dashboard.Panel]{
 			utils.StatPanel(
+				1,
 				"Prometheus",
 				"Test",
 				"Test",
