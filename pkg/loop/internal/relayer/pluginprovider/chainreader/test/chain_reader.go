@@ -47,13 +47,17 @@ func (c staticChainReader) Bind(_ context.Context, _ []types.BoundContract) erro
 	return nil
 }
 
-func (c staticChainReader) GetLatestValue(_ context.Context, contractName, method string, params, returnVal any) error {
-	if !assert.ObjectsAreEqual(contractName, c.contractName) {
-		return fmt.Errorf("%w: expected report context %v but got %v", types.ErrInvalidType, c.contractName, contractName)
+func (c staticChainReader) Unbind(_ context.Context, _ []types.BoundContract) error {
+	return nil
+}
+
+func (c staticChainReader) GetLatestValue(_ context.Context, contract types.BoundContract, params, returnVal any) error {
+	comp := types.NewBoundContract(contract.Address, c.contractName, c.contractMethod)
+
+	if !assert.ObjectsAreEqual(contract, comp) {
+		return fmt.Errorf("%w: expected report context %v but got %v", types.ErrInvalidType, comp.Key(), contract.Key())
 	}
-	if method != c.contractMethod {
-		return fmt.Errorf("%w: expected generic contract method %v but got %v", types.ErrInvalidType, c.contractMethod, method)
-	}
+
 	//gotParams, ok := params.(*map[string]string)
 	gotParams, ok := params.(*map[string]any)
 	if !ok {
@@ -74,13 +78,14 @@ func (c staticChainReader) GetLatestValue(_ context.Context, contractName, metho
 	return nil
 }
 
-func (c staticChainReader) QueryKey(_ context.Context, _ string, _ query.KeyFilter, _ query.LimitAndSort, _ any) ([]types.Sequence, error) {
+func (c staticChainReader) QueryKey(_ context.Context, _ types.BoundContract, _ query.KeyFilter, _ query.LimitAndSort, _ any) ([]types.Sequence, error) {
 	return nil, nil
 }
 
 func (c staticChainReader) Evaluate(ctx context.Context, cr types.ContractReader) error {
 	gotLatestValue := make(map[string]any)
-	err := cr.GetLatestValue(ctx, c.contractName, c.contractMethod, &c.params, &gotLatestValue)
+
+	err := cr.GetLatestValue(ctx, types.NewBoundContract("", c.contractName, c.contractMethod), &c.params, &gotLatestValue)
 	if err != nil {
 		return fmt.Errorf("failed to call GetLatestValue(): %w", err)
 	}
