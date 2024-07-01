@@ -33,7 +33,7 @@ type ChainReaderClient interface {
 	GetLatestValue(ctx context.Context, in *GetLatestValueRequest, opts ...grpc.CallOption) (*GetLatestValueReply, error)
 	QueryKey(ctx context.Context, in *QueryKeyRequest, opts ...grpc.CallOption) (*QueryKeyReply, error)
 	Bind(ctx context.Context, in *BindRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Unbind(ctx context.Context, in *BindRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Unbind(ctx context.Context, in *UnbindRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type chainReaderClient struct {
@@ -71,7 +71,7 @@ func (c *chainReaderClient) Bind(ctx context.Context, in *BindRequest, opts ...g
 	return out, nil
 }
 
-func (c *chainReaderClient) Unbind(ctx context.Context, in *BindRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *chainReaderClient) Unbind(ctx context.Context, in *UnbindRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, ChainReader_Unbind_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -87,7 +87,7 @@ type ChainReaderServer interface {
 	GetLatestValue(context.Context, *GetLatestValueRequest) (*GetLatestValueReply, error)
 	QueryKey(context.Context, *QueryKeyRequest) (*QueryKeyReply, error)
 	Bind(context.Context, *BindRequest) (*emptypb.Empty, error)
-	Unbind(context.Context, *BindRequest) (*emptypb.Empty, error)
+	Unbind(context.Context, *UnbindRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedChainReaderServer()
 }
 
@@ -104,7 +104,7 @@ func (UnimplementedChainReaderServer) QueryKey(context.Context, *QueryKeyRequest
 func (UnimplementedChainReaderServer) Bind(context.Context, *BindRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Bind not implemented")
 }
-func (UnimplementedChainReaderServer) Unbind(context.Context, *BindRequest) (*emptypb.Empty, error) {
+func (UnimplementedChainReaderServer) Unbind(context.Context, *UnbindRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Unbind not implemented")
 }
 func (UnimplementedChainReaderServer) mustEmbedUnimplementedChainReaderServer() {}
@@ -175,7 +175,7 @@ func _ChainReader_Bind_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 func _ChainReader_Unbind_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BindRequest)
+	in := new(UnbindRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -187,7 +187,7 @@ func _ChainReader_Unbind_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: ChainReader_Unbind_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ChainReaderServer).Unbind(ctx, req.(*BindRequest))
+		return srv.(ChainReaderServer).Unbind(ctx, req.(*UnbindRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

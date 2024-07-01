@@ -11,7 +11,7 @@ service ChainReader {
   rpc GetLatestValue (GetLatestValueRequest) returns (GetLatestValueReply) {}
   rpc QueryKey(QueryKeyRequest) returns (QueryKeyReply) {}
   rpc Bind(BindRequest) returns (google.protobuf.Empty) {}
-  rpc Unbind(BindRequest) returns (google.protobuf.Empty) {}
+  rpc Unbind(UnbindRequest) returns (google.protobuf.Empty) {}
 }
 
 // GetLatestValueRequest has arguments for [github.com/smartcontractkit/chainlink-common/pkg/types.ChainReader.GetLatestValue].
@@ -29,6 +29,11 @@ message QueryKeyRequest {
 
 // BindRequest has arguments for [github.com/smartcontractkit/chainlink-common/pkg/types.ChainReader.Bind/Unbind].
 message BindRequest {
+  repeated BoundContract bindings = 1;
+}
+
+// UnbindRequest has arguments for [github.com/smartcontractkit/chainlink-common/pkg/types.ChainReader.Bind/Unbind].
+message UnbindRequest {
   repeated BoundContract bindings = 1;
 }
 

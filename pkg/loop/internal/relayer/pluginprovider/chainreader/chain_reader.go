@@ -210,7 +210,7 @@ func (c *Client) Unbind(ctx context.Context, bindings []types.BoundContract) err
 		}
 	}
 
-	_, err := c.grpc.Unbind(ctx, &pb.BindRequest{Bindings: pbBindings})
+	_, err := c.grpc.Unbind(ctx, &pb.UnbindRequest{Bindings: pbBindings})
 
 	return net.WrapRPCErr(err)
 }
@@ -319,7 +319,7 @@ func (c *Server) Bind(ctx context.Context, bindings *pb.BindRequest) (*emptypb.E
 	return &emptypb.Empty{}, c.impl.Bind(ctx, tBindings)
 }
 
-func (c *Server) Unbind(ctx context.Context, bindings *pb.BindRequest) (*emptypb.Empty, error) {
+func (c *Server) Unbind(ctx context.Context, bindings *pb.UnbindRequest) (*emptypb.Empty, error) {
 	tBindings := make([]types.BoundContract, len(bindings.Bindings))
 	for i, b := range bindings.Bindings {
 		tBindings[i] = types.BoundContract{
