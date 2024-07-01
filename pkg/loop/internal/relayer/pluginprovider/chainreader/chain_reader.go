@@ -136,7 +136,17 @@ func (c *Client) GetLatestValue(ctx context.Context, contract types.BoundContrac
 		return err
 	}
 
-	reply, err := c.grpc.GetLatestValue(ctx, &pb.GetLatestValueRequest{Contract: &pb.BoundContract{Name: contract.Name, Address: contract.Address}, Params: versionedParams})
+	reply, err := c.grpc.GetLatestValue(
+		ctx,
+		&pb.GetLatestValueRequest{
+			Contract: &pb.BoundContract{
+				Address:  contract.Address,
+				Contract: contract.Contract,
+				Method:   contract.Method,
+			},
+			Params: versionedParams,
+		},
+	)
 	if err != nil {
 		return net.WrapRPCErr(err)
 	}
@@ -155,7 +165,18 @@ func (c *Client) QueryKey(ctx context.Context, contract types.BoundContract, fil
 		return nil, err
 	}
 
-	reply, err := c.grpc.QueryKey(ctx, &pb.QueryKeyRequest{Contract: &pb.BoundContract{Name: contract.Name, Address: contract.Address}, Filter: pbQueryFilter, LimitAndSort: pbLimitAndSort})
+	reply, err := c.grpc.QueryKey(
+		ctx,
+		&pb.QueryKeyRequest{
+			Contract: &pb.BoundContract{
+				Address:  contract.Address,
+				Contract: contract.Contract,
+				Method:   contract.Method,
+			},
+			Filter:       pbQueryFilter,
+			LimitAndSort: pbLimitAndSort,
+		},
+	)
 	if err != nil {
 		return nil, net.WrapRPCErr(err)
 	}
@@ -166,8 +187,14 @@ func (c *Client) QueryKey(ctx context.Context, contract types.BoundContract, fil
 func (c *Client) Bind(ctx context.Context, bindings []types.BoundContract) error {
 	pbBindings := make([]*pb.BoundContract, len(bindings))
 	for i, b := range bindings {
-		pbBindings[i] = &pb.BoundContract{Address: b.Address, Name: b.Name, Pending: b.Pending}
+		pbBindings[i] = &pb.BoundContract{
+			Address:  b.Address,
+			Contract: b.Contract,
+			Method:   b.Method,
+			Pending:  b.Pending,
+		}
 	}
+
 	_, err := c.grpc.Bind(ctx, &pb.BindRequest{Bindings: pbBindings})
 	return net.WrapRPCErr(err)
 }
@@ -175,10 +202,16 @@ func (c *Client) Bind(ctx context.Context, bindings []types.BoundContract) error
 func (c *Client) Unbind(ctx context.Context, bindings []types.BoundContract) error {
 	pbBindings := make([]*pb.BoundContract, len(bindings))
 	for i, b := range bindings {
-		pbBindings[i] = &pb.BoundContract{Address: b.Address, Name: b.Name, Pending: b.Pending}
+		pbBindings[i] = &pb.BoundContract{
+			Address:  b.Address,
+			Contract: b.Contract,
+			Method:   b.Method,
+			Pending:  b.Pending,
+		}
 	}
 
 	_, err := c.grpc.Unbind(ctx, &pb.BindRequest{Bindings: pbBindings})
+
 	return net.WrapRPCErr(err)
 }
 
@@ -214,7 +247,7 @@ func WithServerEncoding(version EncodingVersion) ServerOpt {
 func (c *Server) GetLatestValue(ctx context.Context, request *pb.GetLatestValueRequest) (*pb.GetLatestValueReply, error) {
 	contract := convertBoundContractFromProto(request.Contract)
 
-	params, err := getContractEncodedType(contract.Contract(), contract.Method(), c.impl, true)
+	params, err := getContractEncodedType(contract.Contract, contract.Method, c.impl, true)
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +256,7 @@ func (c *Server) GetLatestValue(ctx context.Context, request *pb.GetLatestValueR
 		return nil, err
 	}
 
-	retVal, err := getContractEncodedType(contract.Contract(), contract.Method(), c.impl, false)
+	retVal, err := getContractEncodedType(contract.Contract, contract.Method, c.impl, false)
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +282,7 @@ func (c *Server) QueryKey(ctx context.Context, request *pb.QueryKeyRequest) (*pb
 
 	contract := convertBoundContractFromProto(request.Contract)
 
-	sequenceDataType, err := getContractEncodedType(contract.Contract(), queryFilter.Key, c.impl, false)
+	sequenceDataType, err := getContractEncodedType(contract.Contract, queryFilter.Key, c.impl, false)
 	if err != nil {
 		return nil, err
 	}
@@ -275,7 +308,12 @@ func (c *Server) QueryKey(ctx context.Context, request *pb.QueryKeyRequest) (*pb
 func (c *Server) Bind(ctx context.Context, bindings *pb.BindRequest) (*emptypb.Empty, error) {
 	tBindings := make([]types.BoundContract, len(bindings.Bindings))
 	for i, b := range bindings.Bindings {
-		tBindings[i] = types.BoundContract{Address: b.Address, Name: b.Name, Pending: b.Pending}
+		tBindings[i] = types.BoundContract{
+			Address:  b.Address,
+			Contract: b.Contract,
+			Method:   b.Method,
+			Pending:  b.Pending,
+		}
 	}
 
 	return &emptypb.Empty{}, c.impl.Bind(ctx, tBindings)
@@ -284,7 +322,12 @@ func (c *Server) Bind(ctx context.Context, bindings *pb.BindRequest) (*emptypb.E
 func (c *Server) Unbind(ctx context.Context, bindings *pb.BindRequest) (*emptypb.Empty, error) {
 	tBindings := make([]types.BoundContract, len(bindings.Bindings))
 	for i, b := range bindings.Bindings {
-		tBindings[i] = types.BoundContract{Address: b.Address, Name: b.Name, Pending: b.Pending}
+		tBindings[i] = types.BoundContract{
+			Address:  b.Address,
+			Contract: b.Contract,
+			Method:   b.Method,
+			Pending:  b.Pending,
+		}
 	}
 
 	return &emptypb.Empty{}, c.impl.Unbind(ctx, tBindings)
@@ -447,8 +490,9 @@ func convertSequencesToProto(sequences []types.Sequence, version EncodingVersion
 
 func convertBoundContractFromProto(contract *pb.BoundContract) types.BoundContract {
 	return types.BoundContract{
-		Address: contract.Address,
-		Name:    contract.Name,
+		Address:  contract.Address,
+		Contract: contract.Contract,
+		Method:   contract.Method,
 	}
 }
 

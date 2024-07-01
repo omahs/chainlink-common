@@ -103,7 +103,7 @@ func TestBind(t *testing.T) {
 				es.err = errorType
 				t.Run("Bind unwraps errors from server "+errorType.Error(), func(t *testing.T) {
 					ctx := tests.Context(t)
-					err := chainReader.Bind(ctx, []types.BoundContract{{Name: "Name", Address: "address"}})
+					err := chainReader.Bind(ctx, []types.BoundContract{{Contract: "Contract", Method: "Method", Address: "address"}})
 					assert.True(t, errors.Is(err, errorType))
 				})
 			}
@@ -136,7 +136,7 @@ func TestGetLatestValue(t *testing.T) {
 				nilTester.Setup(t)
 				nilCr := nilTester.GetChainReader(t)
 
-				err := nilCr.GetLatestValue(ctx, types.NewBoundContract("", "", "method"), "anything", "anything")
+				err := nilCr.GetLatestValue(ctx, types.BoundContract{Method: "method"}, "anything", "anything")
 				assert.Equal(t, codes.Unimplemented, status.Convert(err).Code())
 			})
 
@@ -144,7 +144,7 @@ func TestGetLatestValue(t *testing.T) {
 				es.err = errorType
 				t.Run("GetLatestValue unwraps errors from server "+errorType.Error(), func(t *testing.T) {
 					ctx := tests.Context(t)
-					err := chainReader.GetLatestValue(ctx, types.NewBoundContract("", "", "method"), nil, "anything")
+					err := chainReader.GetLatestValue(ctx, types.BoundContract{Method: "method"}, nil, "anything")
 					assert.True(t, errors.Is(err, errorType))
 				})
 			}
@@ -153,7 +153,7 @@ func TestGetLatestValue(t *testing.T) {
 			es.err = nil
 			t.Run("GetLatestValue returns error if type cannot be encoded in the wire format", func(t *testing.T) {
 				ctx := tests.Context(t)
-				err := chainReader.GetLatestValue(ctx, types.NewBoundContract("", "", "method"), &cannotEncode{}, &TestStruct{})
+				err := chainReader.GetLatestValue(ctx, types.BoundContract{Method: "method"}, &cannotEncode{}, &TestStruct{})
 				assert.True(t, errors.Is(err, types.ErrInvalidType))
 			})
 		}
@@ -184,7 +184,7 @@ func TestQueryKey(t *testing.T) {
 				nilTester.Setup(t)
 				nilCr := nilTester.GetChainReader(t)
 
-				_, err := nilCr.QueryKey(ctx, types.NewBoundContract("", "", ""), query.KeyFilter{}, query.LimitAndSort{}, &[]interface{}{nil})
+				_, err := nilCr.QueryKey(ctx, types.BoundContract{}, query.KeyFilter{}, query.LimitAndSort{}, &[]interface{}{nil})
 				assert.Equal(t, codes.Unimplemented, status.Convert(err).Code())
 			})
 
@@ -192,7 +192,7 @@ func TestQueryKey(t *testing.T) {
 				es.err = errorType
 				t.Run("QueryKey unwraps errors from server "+errorType.Error(), func(t *testing.T) {
 					ctx := tests.Context(t)
-					_, err := chainReader.QueryKey(ctx, types.NewBoundContract("", "", ""), query.KeyFilter{}, query.LimitAndSort{}, &[]interface{}{nil})
+					_, err := chainReader.QueryKey(ctx, types.BoundContract{}, query.KeyFilter{}, query.LimitAndSort{}, &[]interface{}{nil})
 					assert.True(t, errors.Is(err, errorType))
 				})
 			}
@@ -202,7 +202,7 @@ func TestQueryKey(t *testing.T) {
 					impl.expectedQueryFilter = tc
 					filter, err := query.Where(tc.Key, tc.Expressions...)
 					require.NoError(t, err)
-					_, err = cr.QueryKey(tests.Context(t), types.NewBoundContract("", "", ""), filter, query.LimitAndSort{}, &[]interface{}{nil})
+					_, err = cr.QueryKey(tests.Context(t), types.BoundContract{}, filter, query.LimitAndSort{}, &[]interface{}{nil})
 					require.NoError(t, err)
 				}
 			})
@@ -238,8 +238,8 @@ func (it *fakeChainReaderInterfaceTester) GetChainReader(_ *testing.T) types.Con
 
 func (it *fakeChainReaderInterfaceTester) GetBindings(_ *testing.T) []types.BoundContract {
 	return []types.BoundContract{
-		{Name: AnyContractName, Address: AnyContractName},
-		{Name: AnySecondContractName, Address: AnySecondContractName},
+		{Contract: AnyContractName, Address: AnyContractName},
+		{Contract: AnySecondContractName, Address: AnySecondContractName},
 	}
 }
 
@@ -291,22 +291,22 @@ func (f *fakeChainReader) SetLatestValue(ts *TestStruct) {
 }
 
 func (f *fakeChainReader) GetLatestValue(_ context.Context, contract types.BoundContract, params, returnVal any) error {
-	if contract.Method() == MethodReturningUint64 {
+	if contract.Method == MethodReturningUint64 {
 		r := returnVal.(*uint64)
 
-		if contract.Contract() == AnyContractName {
+		if contract.Contract == AnyContractName {
 			*r = AnyValueToReadWithoutAnArgument
 		} else {
 			*r = AnyDifferentValueToReadWithoutAnArgument
 		}
 
 		return nil
-	} else if contract.Method() == MethodReturningUint64Slice {
+	} else if contract.Method == MethodReturningUint64Slice {
 		r := returnVal.(*[]uint64)
 		*r = AnySliceToReadWithoutAnArgument
 
 		return nil
-	} else if contract.Method() == MethodReturningSeenStruct {
+	} else if contract.Method == MethodReturningSeenStruct {
 		pv := params.(*TestStruct)
 		rv := returnVal.(*TestStructWithExtraField)
 
@@ -316,7 +316,7 @@ func (f *fakeChainReader) GetLatestValue(_ context.Context, contract types.Bound
 		rv.BigField = big.NewInt(2)
 
 		return nil
-	} else if contract.Method() == EventName {
+	} else if contract.Method == EventName {
 		f.lock.Lock()
 		defer f.lock.Unlock()
 
@@ -327,7 +327,7 @@ func (f *fakeChainReader) GetLatestValue(_ context.Context, contract types.Bound
 		*returnVal.(*TestStruct) = f.triggers[len(f.triggers)-1]
 
 		return nil
-	} else if contract.Method() == EventWithFilterName {
+	} else if contract.Method == EventWithFilterName {
 		f.lock.Lock()
 		defer f.lock.Unlock()
 
@@ -342,13 +342,13 @@ func (f *fakeChainReader) GetLatestValue(_ context.Context, contract types.Bound
 		}
 
 		return types.ErrNotFound
-	} else if contract.Method() == DifferentMethodReturningUint64 {
+	} else if contract.Method == DifferentMethodReturningUint64 {
 		r := returnVal.(*uint64)
 		*r = AnyDifferentValueToReadWithoutAnArgument
 
 		return nil
-	} else if contract.Method() != MethodTakingLatestParamsReturningTestStruct {
-		return errors.New("unknown method " + contract.Method())
+	} else if contract.Method != MethodTakingLatestParamsReturningTestStruct {
+		return errors.New("unknown method " + contract.Method)
 	}
 
 	f.lock.Lock()

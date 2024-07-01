@@ -2,7 +2,6 @@ package types
 
 import (
 	"context"
-	"strings"
 
 	"github.com/smartcontractkit/chainlink-common/pkg/services"
 	"github.com/smartcontractkit/chainlink-common/pkg/types/query"
@@ -73,36 +72,12 @@ type Sequence struct {
 }
 
 type BoundContract struct {
-	Address string
-	Name    string
-	Pending bool
-}
-
-func NewBoundContract(address string, contract string, method string) BoundContract {
-	return BoundContract{
-		Address: address,
-		Name:    strings.Join(append([]string{contract}, method), "-"),
-	}
+	Address  string
+	Contract string
+	Method   string
+	Pending  bool
 }
 
 func (bc BoundContract) Key() string {
-	return bc.Address + "-" + bc.Name
-}
-
-func (bc BoundContract) Contract() string {
-	parts := strings.Split(bc.Name, "-")
-	if len(parts) > 0 {
-		return parts[0]
-	}
-
-	return ""
-}
-
-func (bc BoundContract) Method() string {
-	parts := strings.Split(bc.Name, "-")
-	if len(parts) > 1 {
-		return parts[1]
-	}
-
-	return ""
+	return bc.Address + "-" + bc.Contract + "-" + bc.Method
 }
