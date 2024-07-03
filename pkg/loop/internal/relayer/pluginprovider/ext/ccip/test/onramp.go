@@ -71,7 +71,7 @@ var OnRampReader = staticOnRamp{
 			Finalized: true,
 		},
 		getSendRequestsForSeqNumsRequest: getSendRequestsForSeqNumsRequest{
-			SeqNums:   []ccip.SequenceNumberRange{{1, 2}},
+			SeqNums:   []ccip.SequenceNumberRange{{Min: 1, Max: 2}},
 			Finalized: true,
 		},
 		getSendRequestsForSeqNumsResponse: getSendRequestsForSeqNumsResponse{
