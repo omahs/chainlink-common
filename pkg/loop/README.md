@@ -48,7 +48,7 @@ Protocol buffer definitions & generated code.
 
 ## Communication
 
-GRPC client/server pairs are used to communicated between the host and each plugin.
+GRPC client/server pairs are used to communicate between the host and each plugin.
 Plugins cannot communicate directly with one another, but the host can proxy a connection between them.
 
 Here are the main components for the case of Median:  
